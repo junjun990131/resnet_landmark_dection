@@ -41,6 +41,8 @@ def DownloadImage(key_urls):
         print('Image %s already exists. NO %d img has been processed' % (key,i))
   data_name=[]
   data_label=[]
+  data_name_t=[]
+  data_label_t=[]
   dict=Counter(new_label)
   dict2 = sorted(dict.items(), key=lambda dict: dict[1], reverse=True)
   # print(dict)
@@ -48,22 +50,28 @@ def DownloadImage(key_urls):
   i=0
   for item in dict2:
     (key,values)=item
-    if values>=2000:
-      values=2000
+    if values>=500:
+      values=500
     # print(str(key)+"  "+str(values))
     print(str(values))
 
     for value in range(values):
       index=new_label.index(key)
-      data_name.append(new_name.pop(index))
-      data_label.append(key)
+      if value<=int(0.9*values):
+        data_name.append(new_name.pop(index))
+        data_label.append(key)
+      else:
+        data_name_t.append(new_name.pop(index))
+        data_label_t.append(key)
       new_label.pop(index)
     i+=1
     if i==1000:
       break
   dataframe = pd.DataFrame({'Keys':data_name,'labels':data_label})
-  dataframe.to_csv(r"C:\Users\13575\Desktop\Landmark\dataset_csv\image_label.csv",index=False,sep=',')
-  print(dict)
+  dataframe.to_csv(r"C:\Users\13575\Desktop\Landmark\dataset_csv\image_label_train.csv",index=False,sep=',')
+  dataframe1 = pd.DataFrame({'Keys':data_name_t,'labels':data_label_t})
+  dataframe1.to_csv(r"C:\Users\13575\Desktop\Landmark\dataset_csv\image_label_test.csv",index=False,sep=',')
+
 
   return
   
@@ -72,7 +80,7 @@ def Run():
   #   print('Syntax: %s <data_file.csv> <output_dir/>' % sys.argv[0])
   #   sys.exit(0)
   # (data_file, out_dir) = sys.argv[1:]
-  data_file=r"C:\Users\13575\Desktop\Landmark\dataset_csv\train_sorted.csv"
+  data_file=r"C:\Users\13575\Desktop\Landmark\dataset_csv\train_1.csv"
   key_url_list = ParseData(data_file)
   # pool = multiprocessing.Pool(processes=50)
   # pool.map(DownloadImage, key_url_list)
